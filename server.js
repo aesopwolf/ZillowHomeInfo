@@ -10,7 +10,7 @@ app.use('/', express.static(__dirname + '/public/html'));
 app.use('/script', express.static(__dirname + '/public/script'));
 
 //setup api call route
-app.get('/getSearchResults'. function(req, res) {
+app.get('/getSearchResults', function(req, res) {
 
 });
 

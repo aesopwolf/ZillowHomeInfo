@@ -10,7 +10,7 @@
 	</head>
 	<body>
 		<div id="address_field">
-			<input id="address_search_bar" placeholder="Enter an address" type="text">
+			<input id="autocomplete" placeholder="Enter an address" type="text">
 			<button id="search" name="Search">Search</button>
 		</div>
 		<div id="info_pane">
@@ -21,85 +21,9 @@
 			</div>
 			<hr>
 			<div class="row_item">
-
+				Zestimate: 82928638
 			</div>
 		</div>
-		<script type="text/javascript">
-			
-			var autoComplete, search_bar;
-			search_bar = document.getElementById('address_search_bar');
-
-			function initialize() {
-				console.log('init');
-				bindEvents();
-
-				var options = 	{
-									types: ['geocode'],
-									componentRestrictions: {country: 'us'}
-								};
-
-				autoComplete = new google.maps.places.Autocomplete(search_bar, options);
-			}
-			
-			function bindEvents() {
-				console.log('bind');
-				$('#address_search_bar').on("blur",function(e){
-							displayAddress();
-						});
-				/*
-				google.maps.event.addListener(search_bar, 'places_changed', function() {
-					//displayAddress();
-				});
-				google.maps.event.addListener(search_bar, 'click', function() {
-					console.log('click');
-					//displayAddress();
-				});
-				*/
-			}
-
-			function displayAddress() {
-				var place = autoComplete.getPlace();
-				console.log('display');
-				var line1, line2;
-				var address_obj = {
-					street_number: ""
-					, route: ""
-					, city: ""
-					, state: ""
-					, zip: ""
-				};
-				//place address_components are annoying to grab, organizing...
-				//line1 is street_num and route,
-				//line2 is city, state, and zip
-				
-				for(var i = 0; i < place.address_components.length; i++) {
-					var comp = place.address_components[i];
-					
-					if(comp.types[0] == "street_number")
-						address_obj.street_number = comp.short_name;
-					else if(comp.types[0] == "route")
-						address_obj.route = comp.short_name;
-					else if(comp.types[0] == "locality")
-						address_obj.city = comp.short_name;
-					else if(comp.types[0] == "administrative_area_level_1")
-						address_obj.state = comp.short_name;
-					else if(comp.types[0] == "postal_code")
-						address_obj.zip = comp.short_name;
-				}
-				line1 = address_obj.street_number 
-					+ ' ' 
-					+ address_obj.route;
-				line2 = address_obj.city
-					+ ', '
-					+ address_obj.state
-					+ ' '
-					+ address_obj.zip;
-
-				$('#address_line1').text(line1);
-				$('#address_line2').text(line2);
-			}
-
-			initialize();
-		</script>
+		<script type="text/javascript" src="../script/app.js"></script>
 	</body>
 </html>

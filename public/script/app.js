@@ -1,44 +1,28 @@
-var autoComplete;
+var address_search_bar;
 
 function initialize() {
-	console.log('init');
-	var options = 	{
-		types: ['geocode'],
-		componentRestrictions: {country: 'us'}
-	};
+	address_search_bar = $('#address_search_bar').geocomplete({ 
+		types: ['geocode'] 
+	});
 
-	autoComplete = new google.maps.places.Autocomplete($('#autocomplete')[0], options);
-	google.maps.event.clearListeners(autoComplete, 'place_changed');
 	bindEvents();
 }
 
 function bindEvents() {
-	console.log('bind');
-
-	$('#autocomplete').on("blur",function(e){
-		$('#search').focus();
+	address_search_bar.bind("geocode:result", function(event, result){
+		displayAddress(result);
 	});
 
-	$('#search').on("click", function() {
-		displayAddress();
-	});
-	$('#autocomplete').keypress(function(e) {
-		if (e.which == 13) {
-			google.maps.event.trigger(autoComplete, 'place_changed');
-			console.log("trigger");
-			return false;
-		}
-	});
-	google.maps.event.addListener(autoComplete, 'places_changed', function(event) {
-		alert("hmm");
-		console.log(event);
+	address_search_bar.bind("geocode:error", function(event, result){
+		alert("error");
 	});
 
+	$('#search').on('click', function() {
+		address_search_bar.trigger('geocode');
+	});
 }
 
-function displayAddress() {
-	var place = autoComplete.getPlace();
-	console.log('display');
+function displayAddress(place) {
 	var line1, line2;
 	var address_obj = {
 		street_number: ""
@@ -77,7 +61,5 @@ function displayAddress() {
 	$('#address_line1').text(line1);
 	$('#address_line2').text(line2);
 }
-console.log(1);
-initialize();
-console.log(2);
 
+initialize();

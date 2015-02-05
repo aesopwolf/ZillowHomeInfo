@@ -1,0 +1,28 @@
+{
+  "name": "ZillowHomeInfo",
+  "version": "0.0.1",
+  "description": "Retrieve a brief summary of a given address from the Zillow search API.",
+  "main": "server.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "express": "^4.11.2",
+    "numeral": "^1.5.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gideonw/ZillowHomeInfo.git"
+  },
+  "author": "gideonw",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gideonw/ZillowHomeInfo/issues"
+  },
+  "homepage": "https://github.com/gideonw/ZillowHomeInfo"
+}

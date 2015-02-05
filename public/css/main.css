@@ -1,0 +1,77 @@
+body {
+	display: flex;
+	flex-direction: 	column;
+	justify-content:	center;
+	align-items:		stretch;
+	max-width:			700px;
+	background-color:	#f1f1ef;
+	margin: 			auto;
+	font-family: 		Helvetica, sans-serif;
+}
+
+#address_field {
+	display:			flex;
+	flex-direction:		row;
+	justify-content:	center;
+	align-items:		center;
+}
+
+input[type="text"] {
+	font-size: 			1.5em;
+	padding: 			4px;
+	margin:				5px 0px;
+	border-radius:		4px;
+	border: 			1px solid #dadada;
+	flex:				2;
+}
+
+input[type="text"]:focus {
+	outline: 			none;
+	border-color: 		#eaeaea;
+	box-shadow: 		0 0 10px #9ecaed;
+}
+
+button {
+	font-size:			1.5em;
+	padding: 			4px;
+	border-radius:		4px;
+	border:				1px solid #dadada;
+	background-color:	#fff;
+	margin-left:		4px;
+}
+
+button:focus {
+	outline:			none;
+}
+
+button:active {
+	background-color:	#d0d0d0;
+}
+
+#info_pane {
+	background-color: 	#fff;
+	border-radius:		4px;
+	border:				1px solid #dadada;
+	display:			flex;
+	flex-direction:		column;
+	padding:			4px;
+}
+
+hr {
+	height:				1px;
+	border:				0px;
+	background-color:	#dadada;
+	margin:				10px 0px;
+}
+
+.address_line {
+	font-size:			1.25em;
+	display:			block;
+	margin:				5px;
+	height:				1.25em;
+}
+
+#zillow_logo {
+	float:				right;
+	margin-top:			5px;
+}

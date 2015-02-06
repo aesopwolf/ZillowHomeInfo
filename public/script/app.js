@@ -10,7 +10,10 @@ function initialize() {
 
 function bindEvents() {
 	address_search_bar.bind("geocode:result", function(event, result){
-		displayAddress(result);
+		var address = processAddress(result);
+		var address_data = requestInfo(address);
+		displayAddress(address);
+		displayAddressData(address_data);
 	});
 
 	address_search_bar.bind("geocode:error", function(event, result){
@@ -22,8 +25,22 @@ function bindEvents() {
 	});
 }
 
-function displayAddress(place) {
-	var line1, line2;
+function requestInfo(address) {
+	var address_info;
+
+	$.getJSON('/getSearchResults', address)
+		.done(function( json ) {
+			address_info = json;
+		});
+
+	return address_info;
+}
+
+function displayAddressData(address_data) {
+
+}
+
+function processAddress(place) {
 	var address_obj = {
 		street_number: ""
 			, route: ""
@@ -49,14 +66,20 @@ function displayAddress(place) {
 		else if(comp.types[0] == "postal_code")
 			address_obj.zip = comp.short_name;
 	}
-	line1 = address_obj.street_number 
+
+	return address_obj;
+}
+
+
+function displayAddress(address) {
+	var line1 = address.street_number 
 		+ ' ' 
-		+ address_obj.route;
-	line2 = address_obj.city
+		+ address.route;
+	var line2 = address.city
 		+ ', '
-		+ address_obj.state
+		+ address.state
 		+ ' '
-		+ address_obj.zip;
+		+ address.zip;
 
 	$('#address_line1').text(line1);
 	$('#address_line2').text(line2);

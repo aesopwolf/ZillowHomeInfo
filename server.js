@@ -1,8 +1,8 @@
 var express = require('express');
-var num = require('numeral');
 var http = require('http');
 var request = require('request');
-var libxmljs = require("libxmljs");
+var xmljs = require("xml2js");
+var xmlParser = new xmljs.Parser();
 var fs = require('fs');
 var config;
 
@@ -31,23 +31,13 @@ app.get('/getSearchResults', function(req, res) {
 				+ zillowAddrEncode(req)
 				+ zillow_csz_q
 				+ zillowCSZEncode(req);
-	console.log("request: " + req_url);
-
-	//debug, saved response so that I dont keep hitting hte API
-	fs.readFile(__dirname + '/test/zillowresponse/GetSearchResults_home.xml', 
-		function (err, data) {
-			if(err)
-				console.log(err);
-			console.log(data.toString());
-			res.json(zillowXMLtoJSON(data.toString()));
-	});	
-	/*
+	
 	request(req_url, function (error, response, body) {
 		if(!error && response.statusCode == 200) {
 			res.json(zillowXMLtoJSON(body));
 		}
 	});
-	*/
+	
 });
 
 var server = http.createServer(app);
@@ -75,15 +65,20 @@ function zillowCSZEncode(req) {
 	return encodeURIComponent(req_str).replace(/%20/g, '+');
 }
 
-function zillowXMLtoJSON(body) {
+function zillowXMLtoJSON(body, error) {
 	var data_ret = 
 	{
-		prices: 
+		zestimate:
 		{
-			low: 0
-			, current: 0
-			, high: 0
-			, change: 0
+			prices: 
+			{
+				low: 0
+				, current: 0
+				, high: 0
+				, change: 0
+			}
+			, last_updated: "01/01/2010"
+
 		}
 		, region:
 		{
@@ -97,20 +92,51 @@ function zillowXMLtoJSON(body) {
 			, map_home: ""
 			, overview: ""
 		}
-		, last_updated: "01/01/2010"
+		, error:
+		{
+			code: 0
+			, reason: ""
+		}
 	};
 
 	//might want to validate against the xsd, will do later
-	var doc = libxmljs.parseXmlString(body);
-	console.log(doc);
-	//get all of the result elements (should be one, unless a rental comples address)
-	var res = doc.get('//results');
-	console.log(res);
+	xmlParser.parseString(body, function(err, data) {
+		if(err) {
+			data_ret.error.reason = "Problem parsing response.";
+			data_ret.error.code = -1;
+		} else {
+			var data_body = data['SearchResults:searchresults'];
+			//TODO: right here if there are multiple results we can iterate
+			
+			//error
+			data_ret.error.reason = data_body.message[0].text[0];
+			data_ret.error.code = data_body.message[0].code[0];
+			if(data_ret.error.code == 0) {
+				//results section
+				var body_result = data_body.response[0].results[0].result[0];
+				
+				//zestimate prices
+				data_ret.zestimate.prices.change = 
+					body_result.zestimate[0].valueChange[0]['_'];
+				data_ret.zestimate.prices.low = 
+					body_result.zestimate[0].valuationRange[0].low[0]['_'];
+				data_ret.zestimate.prices.high = 
+					body_result.zestimate[0].valuationRange[0].high[0]['_'];
+				data_ret.zestimate.prices.current = 
+					body_result.zestimate[0].amount[0]['_'];
 
-	data_ret.prices.low = res.get('zestimate//low').text();
-	data_ret.prices.high = res.get('zestimate//high').text();
-	data_ret.prices.current = res.get('zestimate/amount').text();
-	data_ret.prices.current = res.get('zestimate/vauleChange').text();
+				//last updated
+				data_ret.zestimate.last_updated = 
+					body_result.zestimate[0]['last-updated'][0];
 
+				//region
+				data_ret.region.type = body_result.localRealEstate[0].region[0].$.type;
+				data_ret.region.name = body_result.localRealEstate[0].region[0].$.name;
+				data_ret.region.zindex_value = 
+					body_result.localRealEstate[0].region[0].zindexValue[0];
+				//links
+			}
+		}
+	});
 	return data_ret;
 }

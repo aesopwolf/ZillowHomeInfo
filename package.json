@@ -8,9 +8,8 @@
   },
   "dependencies": {
     "express": "^4.11.2",
-    "libxmljs": "^0.13.0",
-    "numeral": "^1.5.3",
-    "request": "^2.53.0"
+    "request": "^2.53.0",
+    "xml2js": "^0.4.4"
   },
   "devDependencies": {},
   "scripts": {

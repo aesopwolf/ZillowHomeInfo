@@ -31,7 +31,8 @@ app.get('/getSearchResults', function(req, res) {
 				+ zillowAddrEncode(req)
 				+ zillow_csz_q
 				+ zillowCSZEncode(req);
-	
+	//if scale become an issue, this ould need to change
+	//	and cache would become more important
 	request(req_url, function (error, response, body) {
 		if(!error && response.statusCode == 200) {
 			res.json(zillowXMLtoJSON(body));
@@ -66,6 +67,7 @@ function zillowCSZEncode(req) {
 }
 
 function zillowXMLtoJSON(body, error) {
+	//quick and easy
 	var data_ret = 
 	{
 		zestimate:
@@ -78,7 +80,6 @@ function zillowXMLtoJSON(body, error) {
 				, change: 0
 			}
 			, last_updated: "01/01/2010"
-
 		}
 		, region:
 		{

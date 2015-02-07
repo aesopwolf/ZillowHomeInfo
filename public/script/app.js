@@ -10,14 +10,21 @@ function initialize() {
 
 function bindEvents() {
 	address_search_bar.bind("geocode:result", function(event, result){
+		$('#error_pane').hide();
+		$('#landing_pane').hide();
+		$('#info_pane').css('display','flex');
+
 		var address = processAddress(result);
-		var address_data = requestInfo(address);
 		displayAddress(address);
-		displayAddressData(address_data);
+
+		$.getJSON('/getSearchResults', address)
+			.done(function( json ) {
+				displayAddressData(json);
+			});
 	});
 
 	address_search_bar.bind("geocode:error", function(event, result){
-		alert("error");
+		$('#error_pane').text('Please enter a full address.').show();
 	});
 
 	$('#search').on('click', function() {
@@ -25,19 +32,48 @@ function bindEvents() {
 	});
 }
 
-function requestInfo(address) {
-	var address_info;
+function displayAddressData(addr_data) {
+	console.log(addr_data.error.code);
+	console.log(addr_data);
+	if(addr_data.error.code != 0) {
+		//display error
 
-	$.getJSON('/getSearchResults', address)
-		.done(function( json ) {
-			address_info = json;
-		});
+	} else {
+		//zestimate data
+		$('#zestimate_date > span.date').text(addr_data.zestimate.last_updated);
+		$('#zestimate_low > span.value')
+			.text(numeral(addr_data.zestimate.prices.low).format('$0,0'));
+		$('#zestimate_current > span.value')
+			.text(numeral(addr_data.zestimate.prices.current).format('$0,0'));
+		$('#zestimate_high > span.value')
+			.text(numeral(addr_data.zestimate.prices.high).format('$0,0'));
 
-	return address_info;
-}
+		//calc width of bar... this is currently usesless (needs to be changed)
+		var width = $('#zestimate').innerWidth() * 
+			(Math.abs(addr_data.zestimate.prices.change) / addr_data.zestimate.prices.current);
 
-function displayAddressData(address_data) {
+		console.log(addr_data.zestimate.prices.change);
 
+		if(width < 100)
+			width = 100;
+console.log(parseInt(addr_data.zestimate.prices.change) > 0);
+		if(parseInt(addr_data.zestimate.prices.change) > 0){
+			$('#zestimate_mv_pos').show();
+			$('#zestimate_mv_pos').width(width);
+			$('#zestimate_mv_pad').width(width);
+			$('#zestimate_mv_neg').hide();
+			$('#zestimate_mv_pos').text(
+					numeral(addr_data.zestimate.prices.change).format('$0,0'));
+		} else {
+			$('#zestimate_mv_pos').hide();
+			$('#zestimate_mv_pad').width(width);
+			$('#zestimate_mv_neg').width(width);
+			$('#zestimate_mv_neg').show();
+			$('#zestimate_mv_neg').text(
+					numeral(addr_data.zestimate.prices.change).format('+$0,0'));
+		}
+
+	}
 }
 
 function processAddress(place) {

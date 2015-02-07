@@ -5,6 +5,7 @@
 		<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
 		<meta charset="utf-8">
 		<link rel="stylesheet" href="css/main.css">
+		<script type="text/javascript" src="script/numeral.min.js"></script>
 		<script type="text/javascript" src="script/jquery-2.1.3.min.js"></script>
 		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
 		<script type="text/javascript" src="script/jquery.geocomplete.min.js"></script>
@@ -14,7 +15,12 @@
 			<input id="address_search_bar" placeholder="Enter an address" type="text">
 			<button id="search" name="Search">Search</button>
 		</div>
-		<div id="info_pane">
+		<div id="error_pane" class="pane">
+		</div>
+		<div id="landing_pane" class="pane">
+			Please enter the address of a home to receive some brief infomration about it from Zillow.
+		</div>
+		<div id="info_pane" class="pane">
 			<div class="row_item">
 				<img id="zillow_logo" src="http://www.zillow.com/widgets/GetVersionedResource.htm?path=/static/logos/Zillowlogo_200x50.gif" width="200" height="50" alt="Zillow Real Estate Search" />
 				<p id="address_line1" class="address_line"></p>
@@ -23,29 +29,32 @@
 			<hr>
 			<div class="row_item" id="zestimate">
 				<div id="zestimate_date" class="last_updated">
-					Last updated: <span class="date">02/03/2014</span>
+					Last updated: <span class="date"></span>
 				</div>
 				<h3>Zestimate Price</h3>
 				<div class="moving">
-					<div id="zestimate_mv_pos" class="moving_pos">-100</div>
-					<div id="zestimate_mv_pad" class="moving_pad"></div>
 					<div id="zestimate_mv_neg" class="moving_neg"></div>
+					<div id="zestimate_mv_pad" class="moving_pad"></div>
+					<div id="zestimate_mv_pos" class="moving_pos"></div>
 				</div>
 				<div class="prices">
 					<div class="price" id="zestimate_low">
 						<p>Low</p>
-						10
+						<span class="value"></span>
 					</div>
 					<div class="price" id="zestimate_current">
 						<p>Current</p>
-						111
+						<span class="value"></span>
 					</div>
 					<div class="price" id="zestimate_high">
 						<p>High</p>
-						200
+						<span class="value"></span>
 					</div>
 				</div>
 			</div>
+		</div>
+		<div id="source_pane" class="pane">
+			<a href="https://github.com/gideonw/ZillowHomeInfo">Source on Github</a> | Mabe by Gideon Williams
 		</div>
 		<script type="text/javascript" src="../script/app.js"></script>
 	</body>
